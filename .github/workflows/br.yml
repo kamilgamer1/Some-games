@@ -1,0 +1,29 @@
+name: Buckshot Roulette Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout only buckshot-roulette folder
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          sparse-checkout: buckshot-roulette
+          sparse-checkout-cone-mode: true
+
+      - name: Zip buckshot-roulette folder
+        run: zip -r buckshot-roulette.zip buckshot-roulette
+
+      - name: Create release with buckshot-roulette.zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: buckshot-roulette-v1.0
+          name: Buckshot Roulette Folder Release
+          body: |
+            This release contains only the `buckshot-roulette` folder from the repo.
+          files: buckshot-roulette.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

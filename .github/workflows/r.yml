@@ -1,0 +1,29 @@
+name: Raft Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout only raft folder
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          sparse-checkout: raft
+          sparse-checkout-cone-mode: true
+
+      - name: Zip raft folder
+        run: zip -r raft.zip raft
+
+      - name: Create release with raft.zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: raft-v1.0
+          name: Raft Folder Release
+          body: |
+            This release contains only the `raft` folder from the repo.
+          files: raft.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

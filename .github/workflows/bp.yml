@@ -1,0 +1,29 @@
+name: Baldi Plus Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout only baldi-plus folder
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          sparse-checkout: baldi-plus
+          sparse-checkout-cone-mode: true
+
+      - name: Zip baldi-plus folder
+        run: zip -r baldi-plus.zip baldi-plus
+
+      - name: Create release with baldi-plus.zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: baldi-plus-v1.0
+          name: Baldi Plus Folder Release
+          body: |
+            This release contains only the `baldi-plus` folder from the repo.
+          files: baldi-plus.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

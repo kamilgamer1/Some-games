@@ -1,0 +1,29 @@
+name: Ultrakill Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download ultrakill folder as zip
+        run: |
+          mkdir ultrakill
+          curl -L \
+            https://github.com/${{ github.repository }}/trunk/ultrakill \
+            -o ultrakill.zip
+
+      - name: Unzip folder
+        run: unzip ultrakill.zip -d ultrakill
+
+      - name: Create release with ultrakill.zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ultrakill-v1.0
+          name: Ultrakill Folder Release
+          body: |
+            This release contains only the `ultrakill` folder from the repo.
+          files: ultrakill.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,29 @@
+name: Cuphead Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout only cuphead folder
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          sparse-checkout: cuphead
+          sparse-checkout-cone-mode: true
+
+      - name: Zip cuphead folder
+        run: zip -r cuphead.zip cuphead
+
+      - name: Create release with cuphead.zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: cuphead-v1.0
+          name: Cuphead Folder Release
+          body: |
+            This release contains only the `cuphead` folder from the repo.
+          files: cuphead.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

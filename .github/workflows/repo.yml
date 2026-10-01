@@ -1,0 +1,29 @@
+name: REPO Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout only repo folder
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          sparse-checkout: repo
+          sparse-checkout-cone-mode: true
+
+      - name: Zip repo folder
+        run: zip -r repo.zip repo
+
+      - name: Create release with repo.zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: repo-v1.0
+          name: REPO Folder Release
+          body: |
+            This release contains only the `repo` folder from the repo.
+          files: repo.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

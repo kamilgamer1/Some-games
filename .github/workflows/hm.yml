@@ -1,0 +1,29 @@
+name: Buckshot Roulette Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout only hotline-miami folder
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          sparse-checkout: hotline-miami
+          sparse-checkout-cone-mode: true
+
+      - name: Zip hotline-miami folder
+        run: zip -r hotline-miami.zip hotline-miami
+
+      - name: Create release with hotline-miami.zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: hotline-miami-v1.0
+          name: Hotline Miami Folder Release
+          body: |
+            This release contains only the `hotline-miami` folder from the repo.
+          files: hotline-miami.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

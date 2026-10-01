@@ -1,0 +1,39 @@
+name: Ultrakill Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo (shallow)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Keep only ultrakill folder
+        run: |
+          shopt -s extglob
+          rm -rf !(ultrakill)
+
+      - name: Commit cleaned folder
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Keep only ultrakill folder" || echo "No changes to commit"
+
+      - name: Push to ultrakill-only branch
+        run: |
+          git push origin HEAD:ultrakill-only
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ultrakill-v1.0
+          name: Ultrakill Folder Release
+          body: |
+            This release contains only the `ultrakill` folder from the original repo.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

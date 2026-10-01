@@ -1,0 +1,43 @@
+name: Ultrakill Folder Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo (shallow)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Enable sparse checkout
+        run: |
+          git sparse-checkout init --cone
+          git sparse-checkout set ultrakill
+
+      - name: Commit ultrakill-only tree
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Keep only ultrakill folder" || echo "No changes to commit"
+
+      - name: Push to ultrakill-only branch
+        run: |
+          git push origin HEAD:ultrakill-only
+
+      - name: Zip ultrakill folder
+        run: zip -r ultrakill.zip ultrakill
+
+      - name: Create release with zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ultrakill-v1.0
+          name: Ultrakill Folder Release
+          body: |
+            This release contains only the `ultrakill` folder from the original repo.
+          files: ultrakill.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

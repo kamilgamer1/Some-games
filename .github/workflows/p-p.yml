@@ -1,0 +1,29 @@
+name: People Playground Folder Release
+
+on:
+  workflow_dispatch:   # run manually from the Actions tab
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout only people-playground folder
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          sparse-checkout: people-playground
+          sparse-checkout-cone-mode: true
+
+      - name: Zip people-playground folder
+        run: zip -r people-playground.zip people-playground
+
+      - name: Create release with people-playground.zip
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: people-playground-v1.0
+          name: People Playground Folder Release
+          body: |
+            This release contains only the `people-playground` folder from the repo.
+          files: people-playground.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
